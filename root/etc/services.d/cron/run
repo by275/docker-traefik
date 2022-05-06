@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -f /etc/logrotate.d/traefik ]; then
+    s6-svc -d .
+    exit 0
+fi
+
+echo "${LOGROTATE_CRON_SCHEDULE} logrotate /etc/logrotate.d/traefik" | crontab -
+exec /usr/sbin/crond -f -l ${LOGROTATE_CRON_LOG_LEVEL}

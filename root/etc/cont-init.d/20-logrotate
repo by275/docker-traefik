@@ -1,0 +1,44 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
+    echo "*** logrotate disabled: traefik accesslog '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    exit 0
+fi
+
+if [ ! -e /var/run/docker.sock ]; then
+    echo "*** logrotate disabled: '/var/run/docker.sock' NOT found!"
+    exit 0
+fi
+
+traefik_container_id=$(eval "${TRAEFIK_CONAINER_ID_COMMAND}")
+if [ -z $traefik_container_id ]; then
+    echo "*** logrotate disabled: traefik container NOT found!"
+    exit 0
+fi
+
+cat > /etc/logrotate.d/traefik <<EOL
+
+${TRAEFIK_ACCESSLOG_FILEPATH} {
+    ${LOGROTATE_INTERVAL}
+    maxsize ${LOGROTATE_MAXSIZE}
+    rotate ${LOGROTATE_NROTATE}
+    start 1
+
+    missingok
+    notifempty
+
+    compress
+    delaycompress
+
+    su root root
+    create 0644 abc abc
+
+    sharedscripts
+    postrotate
+        docker kill --signal="USR1" $traefik_container_id
+    endscript
+}
+
+EOL
+
+chmod 644 /etc/logrotate.d/traefik

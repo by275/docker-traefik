@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
+    s6-svc -d .
+    exit 0
+fi
+
+ga_basic_opts="
+--log-file=${TRAEFIK_ACCESSLOG_FILEPATH}
+--log-format=COMMON
+--port=7890
+--real-time-html
+--ws-url=${GOACCESS_WS_URL}/${GOACCESS_BASE_URL}/ws
+--output=/tmp/goaccess_html/index.html
+--db-path=/config/db \
+--persist \
+--restore
+"
+
+IFS=" " read -r -a ga_user_opts <<< "$GOACCESS_USER_OPTS"
+
+command="goaccess $(echo $ga_basic_opts) ${ga_user_opts[@]}"
+echo "*** executing => $command"
+exec s6-setuidgid abc $command

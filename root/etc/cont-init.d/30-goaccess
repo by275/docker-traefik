@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+
+if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
+    echo "*** goaccess disabled: '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    exit 0
+fi
+
+rm -rf \
+    /tmp/goaccess_html
+
+mkdir -p \
+    /config/db \
+    /tmp/goaccess_html
+
+chown -R abc:abc \
+    /config/db \
+    /tmp/goaccess_html
