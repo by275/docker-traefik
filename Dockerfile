@@ -34,6 +34,7 @@ RUN \
 FROM base AS builder
 
 COPY --from=goaccess /usr/local/bin/ /bar/usr/local/bin/
+COPY --from=traefik:latest /usr/local/bin/traefik /bar/usr/local/bin/
 
 # add local files
 COPY root/ /bar/
@@ -48,14 +49,14 @@ RUN \
 # 
 FROM base
 LABEL maintainer="by275"
-LABEL org.opencontainers.image.source https://github.com/by275/docker-goaccess
+LABEL org.opencontainers.image.source https://github.com/by275/docker-traefik
 
 # install packages
 RUN \
     echo "**** install runtime packages ****" && \
     apk add --no-cache \
         `# logrotate` \
-        logrotate gzip tar docker-cli \
+        logrotate gzip tar \
         `# goaccess` \
         gettext libmaxminddb ncurses \
         `# nginx` \
@@ -67,20 +68,19 @@ COPY --from=builder /bar/ /
 # environment settings
 ENV \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
-    TRAEFIK_ACCESSLOG_FILEPATH="/logs/access.log" \
-    TRAEFIK_CONAINER_ID_COMMAND="docker ps --quiet --filter ancestor=traefik" \
+    TRAEFIK_CONFIGFILE=/traefik/traefik.yml \
+    TRAEFIK_ACCESSLOG_FILEPATH=/traefik/logs/access.log \
     LOGROTATE_INTERVAL=yearly \
     LOGROTATE_MAXSIZE=5M \
     LOGROTATE_NROTATE=10 \
     LOGROTATE_CRON_SCHEDULE="* * * * *" \
     LOGROTATE_CRON_LOG_LEVEL=9 \
-    GOACCESS_BASE_URL=/goaccess \
+    GOACCESS_ENABLED=true \
     GOACCESS_WS_URL=example.com:80
 
-VOLUME /config /logs
-WORKDIR /config
+EXPOSE 8080 7890
 
-HEALTHCHECK --interval=5s --timeout=2s --retries=20 \
-    CMD /usr/local/bin/healthcheck || exit 1
+VOLUME /traefik /goaccess
+WORKDIR /traefik
 
 ENTRYPOINT ["/init"]

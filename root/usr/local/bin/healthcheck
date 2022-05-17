@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bash
-set -e
-
-TARGET=localhost
-CURL_OPTS="--connect-timeout 15 --max-time 100 --silent --show-error --fail"
-
-curl ${CURL_OPTS} "http://${TARGET}:${GOACCESS_PORT}/$GOACCESS_BASE_URL" >/dev/null

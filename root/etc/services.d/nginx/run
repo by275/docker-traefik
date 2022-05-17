@@ -1,3 +1,8 @@
 #!/usr/bin/with-contenv bash
 
+if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
+    s6-svc -d .
+    exit 0
+fi
+
 exec /usr/sbin/nginx -g 'daemon off;'

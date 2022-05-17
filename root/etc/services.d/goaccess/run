@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
+if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
     s6-svc -d .
     exit 0
 fi
@@ -10,10 +10,10 @@ ga_basic_opts="
 --log-format=COMMON
 --port=7890
 --real-time-html
---ws-url=${GOACCESS_WS_URL}/${GOACCESS_BASE_URL}/ws
+--ws-url=${GOACCESS_WS_URL}
 --output=/tmp/goaccess_html/index.html
---db-path=/config/db \
---persist \
+--db-path=/goaccess/db 
+--persist 
 --restore
 "
 

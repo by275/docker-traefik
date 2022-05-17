@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+if [ "${GOACCESS_ENABLED}" = "true" ]; then
+    until curl -fs -o /dev/null http://localhost:8080 ; do
+        sleep 1s
+    done
+fi
+
+# static configuration
+exec traefik --configFile="${TRAEFIK_CONFIGFILE}"

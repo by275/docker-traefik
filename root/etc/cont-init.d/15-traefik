@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+# default config file
+if [ ! -f "${TRAEFIK_CONFIGFILE}" ]; then
+    cat > "${TRAEFIK_CONFIGFILE}" <<EOL
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+EOL
+fi
+
+# permissions
+chown -R abc:abc \
+    /traefik
+
+echo "*** traefik v$(traefik version | head -n1 | awk '{print $2}') ready!"

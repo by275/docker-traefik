@@ -1,7 +1,13 @@
 #!/usr/bin/with-contenv bash
 
+if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
+    echo "*** GoAccess disabled: 'GOACCESS_ENABLED=${GOACCESS_ENABLED}'"
+    exit 0
+fi
+
 if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
-    echo "*** goaccess disabled: '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    echo "*** GoAccess disabled: '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    printf "false" > /var/run/s6/container_environment/GOACCESS_ENABLED
     exit 0
 fi
 
@@ -9,9 +15,11 @@ rm -rf \
     /tmp/goaccess_html
 
 mkdir -p \
-    /config/db \
+    /goaccess/db \
     /tmp/goaccess_html
 
 chown -R abc:abc \
-    /config/db \
+    /goaccess \
     /tmp/goaccess_html
+
+echo "*** GoAccess v$(goaccess --version | head -n1 | awk '{print $3}' | sed 's/\.$//') ready!"

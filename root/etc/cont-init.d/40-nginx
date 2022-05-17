@@ -1,68 +1,18 @@
 #!/usr/bin/with-contenv bash
 
-GOACCESS_BASE_URL="$(echo "${GOACCESS_BASE_URL}" | tr -s /)"
-GOACCESS_BASE_URL="${GOACCESS_BASE_URL#/}"
-GOACCESS_BASE_URL="${GOACCESS_BASE_URL%/}"
-printf "$GOACCESS_BASE_URL" > /var/run/s6/container_environment/GOACCESS_BASE_URL
-
-if [ -z "${GOACCESS_BASE_URL}" ]; then
-    cat > /etc/nginx/http.d/default.conf <<EOL
+cat > /etc/nginx/http.d/default.conf <<EOL
 server {
-    listen      80;
+    listen      8080;
     server_name  _;
 
     absolute_redirect off;
 
     location / {
         alias  /tmp/goaccess_html/;
-        index  index.php index.html index.htm;
-    }
-
-    location /ws {
-        proxy_pass http://localhost:7890;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Connection "keep-alive";
-        proxy_pass_request_headers on;
+        index  index.html index.htm;
     }
 }
 EOL
-
-else
-    cat > /etc/nginx/http.d/default.conf <<EOL
-server {
-    listen      80;
-    server_name  _;
-
-    absolute_redirect off;
-
-    location / {
-        log_not_found off;
-        deny all;
-    }
-
-    location = /${GOACCESS_BASE_URL} {
-        return 301 \$scheme://\$http_host/${GOACCESS_BASE_URL}/;
-    }
-
-    location /${GOACCESS_BASE_URL}/ {
-        alias  /tmp/goaccess_html/;
-        index  index.php index.html index.htm;
-    }
-
-    location /${GOACCESS_BASE_URL}/ws {
-        proxy_pass http://localhost:7890;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Connection "keep-alive";
-        proxy_pass_request_headers on;
-    }
-}
-EOL
-
-fi
 
 mkdir -p \
     /run/nginx
