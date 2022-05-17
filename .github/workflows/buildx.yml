@@ -15,13 +15,18 @@ jobs:
   buildx:
     runs-on: ubuntu-20.04
     steps:
-      - 
+      -
         name: Check if buildx required
         run: |
-          docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc traefik:latest /usr/local/bin/traefik /abc/traefik1
-          docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc ${{ env.IMAGE_NAME }}:latest /usr/local/bin/traefik /abc/traefik2
-          if cmp -s traefik1 traefik2 ; then X_SKIP=true ; else X_SKIP=false ; fi
-          [[ $GITHUB_EVENT_NAME != "schedule" ]] && X_SKIP=false
+          if [ $GITHUB_EVENT_NAME = "schedule" ]; then
+            docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc traefik:latest \
+              /usr/local/bin/traefik /abc/traefik1
+            docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc ${{ env.IMAGE_NAME }}:latest \
+              /usr/local/bin/traefik /abc/traefik2
+            if cmp -s traefik1 traefik2 ; then X_SKIP=true ; else X_SKIP=false ; fi
+          else
+            X_SKIP=false
+          fi
           echo "X_SKIP=$X_SKIP" >> $GITHUB_ENV
       -
         name: Checkout

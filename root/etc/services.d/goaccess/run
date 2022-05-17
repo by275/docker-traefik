@@ -12,8 +12,8 @@ ga_basic_opts="
 --real-time-html
 --ws-url=${GOACCESS_WS_URL}
 --output=/tmp/goaccess_html/index.html
---db-path=/goaccess/db 
---persist 
+--db-path=/goaccess/db
+--persist
 --restore
 "
 
