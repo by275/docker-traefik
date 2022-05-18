@@ -2,6 +2,7 @@
 
 # default config file
 if [ ! -f "${TRAEFIK_CONFIGFILE}" ]; then
+    echo "*** generating a default configuration: '${TRAEFIK_CONFIGFILE}'"
     cat > "${TRAEFIK_CONFIGFILE}" <<EOL
 global:
   checkNewVersion: true
