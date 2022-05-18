@@ -2,7 +2,7 @@
 
 cat > /etc/nginx/http.d/default.conf <<EOL
 server {
-    listen      8080;
+    listen      8890;
     server_name  _;
 
     absolute_redirect off;

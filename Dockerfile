@@ -78,7 +78,7 @@ ENV \
     GOACCESS_ENABLED=true \
     GOACCESS_WS_URL=example.com:80
 
-EXPOSE 8080 7890
+EXPOSE 8890 7890
 
 VOLUME /traefik /goaccess
 WORKDIR /traefik

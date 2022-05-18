@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 if [ "${GOACCESS_ENABLED}" = "true" ]; then
-    until curl -fs -o /dev/null http://localhost:8080 ; do
+    until curl -fs -o /dev/null http://localhost:8890 ; do
         sleep 1s
     done
 fi
