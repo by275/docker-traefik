@@ -10,7 +10,6 @@ ga_basic_opts="
 --log-format=COMMON
 --port=7890
 --real-time-html
---ws-url=${GOACCESS_WS_URL}
 --output=/tmp/goaccess_html/index.html
 --db-path=/goaccess/db
 --persist
