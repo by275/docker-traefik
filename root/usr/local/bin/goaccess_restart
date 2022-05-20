@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+s6-svc -wd -d /var/run/s6/services/goaccess
+
+if [ "$1" = "--with-reset-db" ]; then
+    rm -f /goaccess/db/* && logrotate -f /etc/logrotate.d/traefik
+fi
+
+s6-svc -u /var/run/s6/services/goaccess
