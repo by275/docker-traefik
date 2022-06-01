@@ -1,4 +1,4 @@
-ARG ALPINE_VER=3.15
+ARG ALPINE_VER=3.16
 
 FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER} AS base
 
