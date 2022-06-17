@@ -41,7 +41,9 @@ COPY root/ /bar/
 
 RUN \
     echo "**** permissions ****" && \
-    chmod a+x /bar/usr/local/bin/*
+    chmod a+x \
+        /bar/usr/local/bin/* \
+        /bar/etc/services.d/*/data/*
 
 
 # 

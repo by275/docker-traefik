@@ -5,4 +5,5 @@ if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
     exit 0
 fi
 
-exec /usr/sbin/nginx -g 'daemon off;'
+exec s6-notifyoncheck -d -n 0 \
+    /usr/sbin/nginx -g 'daemon off;'

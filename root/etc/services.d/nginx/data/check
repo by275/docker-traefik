@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+if ! curl -fs -o /dev/null http://localhost:8890 ; then
+    sleep 1s
+    exit 1
+fi
+
+exit 0
