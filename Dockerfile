@@ -40,7 +40,7 @@ COPY --from=traefik:latest /usr/local/bin/traefik /bar/usr/local/bin/
 COPY root/ /bar/
 
 RUN \
-    echo "**** goaccess: build and install ****" && \
+    echo "**** permissions ****" && \
     chmod a+x /bar/usr/local/bin/*
 
 

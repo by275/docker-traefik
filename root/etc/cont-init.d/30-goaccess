@@ -1,12 +1,12 @@
 #!/usr/bin/with-contenv bash
 
 if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
-    echo "*** GoAccess disabled: 'GOACCESS_ENABLED=${GOACCESS_ENABLED}'"
+    echo "*** GoAccess disabled as 'GOACCESS_ENABLED=${GOACCESS_ENABLED}'"
     exit 0
 fi
 
 if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
-    echo "*** GoAccess disabled: '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    echo "*** GoAccess disabled as traefik accesslog '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
     printf "false" > /var/run/s6/container_environment/GOACCESS_ENABLED
     exit 0
 fi

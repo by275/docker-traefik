@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
-    echo "*** logrotate disabled: traefik accesslog '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
+    echo "*** logrotate disabled as traefik accesslog '${TRAEFIK_ACCESSLOG_FILEPATH}' NOT found!"
     exit 0
 fi
 
