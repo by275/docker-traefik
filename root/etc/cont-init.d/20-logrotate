@@ -23,7 +23,7 @@ ${TRAEFIK_ACCESSLOG_FILEPATH} {
 
     sharedscripts
     postrotate
-        s6-svc -1 /var/run/s6/services/traefik
+        s6-svc -1 /var/run/service/traefik
     endscript
 }
 EOL

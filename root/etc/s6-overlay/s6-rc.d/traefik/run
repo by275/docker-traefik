@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 if [ "${GOACCESS_ENABLED}" = "true" ]; then
-    s6-svwait -U /var/run/s6/services/nginx
+    s6-svwait -U /var/run/service/nginx && sleep 0.1
 fi
 
 echo "*** loading '${TRAEFIK_CONFIGFILE}' and substituting envs..."

@@ -1,5 +1,10 @@
 #!/usr/bin/with-contenv bash
 
+if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
+    rm -f /var/run/service/nginx/notification-fd
+    exit 0
+fi
+
 cat > /etc/nginx/http.d/default.conf <<EOL
 server {
     listen      8890;

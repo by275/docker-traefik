@@ -6,5 +6,5 @@ if [ ! -f /etc/logrotate.d/traefik ]; then
 fi
 
 # delayed startup
-s6-svwait -u /var/run/s6/services/traefik && sleep 3s
+s6-svwait -u /var/run/service/traefik && sleep 3s
 exec /usr/sbin/crond -f -l ${LOGROTATE_CRON_LOG_LEVEL}
