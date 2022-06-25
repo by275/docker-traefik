@@ -1,6 +1,7 @@
 ARG ALPINE_VER=3.16
 
-FROM ghcr.io/linuxserver/baseimage-alpine:${ALPINE_VER} AS base
+FROM ghcr.io/by275/base:alpine AS prebuilt
+FROM ghcr.io/by275/base:alpine${ALPINE_VER} AS base
 
 # 
 # BUILD
@@ -30,16 +31,30 @@ RUN \
     make -j$(nproc) && \
     make install
 
+# 
+# COLLECT
+# 
+FROM base AS collector
 
-FROM base AS builder
+# add s6-overlay
+COPY --from=prebuilt /s6/ /bar/
+ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /bar/etc/cont-init.d/10-adduser
 
-COPY --from=goaccess /usr/local/bin/ /bar/usr/local/bin/
+# add traefik
 COPY --from=traefik:latest /usr/local/bin/traefik /bar/usr/local/bin/
+
+# add goaccess
+COPY --from=goaccess /usr/local/bin/ /bar/usr/local/bin/
 
 # add local files
 COPY root/ /bar/
 
 RUN \
+    echo "**** directories ****" && \
+    mkdir -p \
+        /bar/traefik \
+        /bar/goaccess \
+        && \
     echo "**** permissions ****" && \
     chmod a+x \
         /bar/usr/local/bin/* \
@@ -48,14 +63,17 @@ RUN \
         /bar/etc/s6-overlay/s6-rc.d/*/data/*
 
 RUN \
-    echo "**** s6: resolving dependencies ****" && \
+    echo "**** s6: resolve dependencies ****" && \
     for dir in /bar/etc/s6-overlay/s6-rc.d/*; do mkdir -p "$dir/dependencies.d"; done && \
-    for dir in /bar/etc/s6-overlay/s6-rc.d/*; do touch "$dir/dependencies.d/99-ci-service-check"; done && \
-    echo "**** s6: creating a new bundled service ****" && \
+    for dir in /bar/etc/s6-overlay/s6-rc.d/*; do touch "$dir/dependencies.d/legacy-cont-init"; done && \
+    echo "**** s6: create a new bundled service ****" && \
     mkdir -p /tmp/app/contents.d && \
     for dir in /bar/etc/s6-overlay/s6-rc.d/*; do touch "/tmp/app/contents.d/$(basename "$dir")"; done && \
     echo "bundle" > /tmp/app/type && \
-    mv /tmp/app /bar/etc/s6-overlay/s6-rc.d/app
+    mv /tmp/app /bar/etc/s6-overlay/s6-rc.d/app && \
+    echo "**** s6: deploy services ****" && \
+    rm /bar/package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/legacy-services && \
+    touch /bar/package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/app
 
 # 
 # RELEASE
@@ -66,8 +84,6 @@ LABEL org.opencontainers.image.source https://github.com/by275/docker-traefik
 
 # install packages
 RUN \
-    echo "**** s6: registering service ****" && \
-    touch /package/admin/s6-overlay/etc/s6-rc/sources/top/contents.d/app && \
     echo "**** install runtime packages ****" && \
     apk add --no-cache \
         `# logrotate` \
@@ -78,7 +94,7 @@ RUN \
         nginx
 
 # add build artifacts
-COPY --from=builder /bar/ /
+COPY --from=collector /bar/ /
 
 # environment settings
 ENV \
@@ -95,6 +111,5 @@ ENV \
 EXPOSE 8890 7890
 
 VOLUME /traefik /goaccess
-WORKDIR /traefik
 
 ENTRYPOINT ["/init"]
