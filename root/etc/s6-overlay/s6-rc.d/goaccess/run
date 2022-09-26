@@ -16,8 +16,6 @@ ga_basic_opts="
 --restore
 "
 
-IFS=" " read -r -a ga_user_opts <<< "$GOACCESS_USER_OPTS"
-
-command="goaccess $(echo $ga_basic_opts) ${ga_user_opts[@]}"
+command="goaccess $(echo $ga_basic_opts) ${$GOACCESS_USER_OPTS}"
 echo "*** executing => $command"
 exec s6-setuidgid abc $command
