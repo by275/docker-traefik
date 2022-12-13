@@ -16,6 +16,6 @@ ga_basic_opts="
 --restore
 "
 
-command="goaccess $(echo $ga_basic_opts) ${$GOACCESS_USER_OPTS}"
+command="goaccess $(echo $ga_basic_opts) ${GOACCESS_USER_OPTS}"
 echo "*** executing => $command"
 exec s6-setuidgid abc $command
