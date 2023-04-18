@@ -6,5 +6,5 @@ fi
 
 echo "*** loading '${TRAEFIK_CONFIGFILE}' and substituting envs..."
 CONFIGFILE="$(mktemp -d -t traefik.XXXX)/traefik.yml"
-envsubst < "${TRAEFIK_CONFIGFILE}" > $CONFIGFILE
+envsubst < "${TRAEFIK_CONFIGFILE}" > "$CONFIGFILE"
 exec traefik --configFile="$CONFIGFILE"

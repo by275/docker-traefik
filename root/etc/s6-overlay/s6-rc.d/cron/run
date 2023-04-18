@@ -7,4 +7,4 @@ fi
 
 # delayed startup
 s6-svwait -u /var/run/service/traefik && sleep 3s
-exec /usr/sbin/crond -f -l ${LOGROTATE_CRON_LOG_LEVEL}
+exec /usr/sbin/crond -f -l "${LOGROTATE_CRON_LOG_LEVEL}"
