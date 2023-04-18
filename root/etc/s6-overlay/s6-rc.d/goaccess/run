@@ -5,17 +5,6 @@ if [ ! "${GOACCESS_ENABLED}" = "true" ]; then
     exit 0
 fi
 
-ga_basic_opts="
---log-file=${TRAEFIK_ACCESSLOG_FILEPATH}
---log-format=COMMON
---port=7890
---real-time-html
---output=/tmp/goaccess_html/index.html
---db-path=/goaccess/db
---persist
---restore
-"
-
-command="goaccess $(echo $ga_basic_opts) ${GOACCESS_USER_OPTS}"
+command="goaccess --no-global-config --config-file=${GOACCESS_CONFIGFILE}"
 echo "*** executing => $command"
 exec s6-setuidgid abc $command

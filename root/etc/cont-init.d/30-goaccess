@@ -11,6 +11,11 @@ if [ ! -f "${TRAEFIK_ACCESSLOG_FILEPATH}" ]; then
     exit 0
 fi
 
+if [ ! -f "$GOACCESS_CONFIGFILE" ]; then
+    echo "*** generating a default configuration: '${GOACCESS_CONFIGFILE}'"
+    envsubst < /etc/goaccess.default.conf > "$GOACCESS_CONFIGFILE"
+fi
+
 rm -rf \
     /tmp/goaccess_html
 
