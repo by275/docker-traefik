@@ -16,6 +16,9 @@ if [ ! -f "$GOACCESS_CONFIGFILE" ]; then
     envsubst < /etc/goaccess.default.conf > "$GOACCESS_CONFIGFILE"
 fi
 
+# GeoLite2
+/usr/local/bin/goaccess_geoip
+
 rm -rf \
     /tmp/goaccess_html
 

@@ -1,0 +1,27 @@
+#!/usr/bin/with-contenv bash
+
+GeoIPRoot="/usr/local/share/GeoIP"
+mkdir -p "$GeoIPRoot"
+
+mmdbURLs=(
+    "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
+    "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
+    "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+)
+
+for mmdbURL in "${mmdbURLs[@]}"; do
+    mmdb="${GeoIPRoot}/$(basename "$mmdbURL")"
+    if [ -f "$mmdb" ]; then
+        # check remote size
+        mmdbSize=$(curl -fsS -m 10 --retry 5 "$mmdbURL" -LI | grep -i content-length | tail -1 | awk '{print $2}' | tr -d '\040\011\012\015')
+        if [ "$mmdbSize" = "$(stat --printf="%s" "$mmdb")" ]; then continue ; fi
+    fi
+    curl -fsSLJ -m 10 --retry 5 -o "$mmdb" "$mmdbURL" >/dev/null 2>&1
+done
+for mmdbURL in "${mmdbURLs[@]}"; do
+    mmdb="${GeoIPRoot}/$(basename "$mmdbURL")"
+    [ -f "$mmdb" ] && [ -f "$GOACCESS_CONFIGFILE" ] && \
+        sed -i '\|'"$mmdb"'$|s|^#||g' "$GOACCESS_CONFIGFILE"
+done
+
+chown -R abc:abc "$GeoIPRoot"
