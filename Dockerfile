@@ -1,7 +1,9 @@
 ARG ALPINE_VER=3.19
+ARG TRAEFIK_VER
 
 FROM ghcr.io/by275/base:alpine AS prebuilt
 FROM ghcr.io/by275/base:alpine${ALPINE_VER} AS base
+FROM traefik:${TRAEFIK_VER} AS traefik
 
 # 
 # BUILD
@@ -41,7 +43,7 @@ COPY --from=prebuilt /s6/ /bar/
 ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /bar/etc/cont-init.d/10-adduser
 
 # add traefik
-COPY --from=traefik:latest /usr/local/bin/traefik /bar/usr/local/bin/
+COPY --from=traefik /usr/local/bin/traefik /bar/usr/local/bin/
 
 # add goaccess
 COPY --from=goaccess /usr/local/bin/ /bar/usr/local/bin/
