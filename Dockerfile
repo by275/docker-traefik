@@ -1,4 +1,4 @@
-ARG ALPINE_VER=3.19
+ARG ALPINE_VER=3.20
 ARG TRAEFIK_VER
 
 FROM ghcr.io/by275/base:alpine AS prebuilt
