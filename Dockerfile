@@ -1,5 +1,5 @@
 ARG ALPINE_VER=3.20
-ARG TRAEFIK_VER
+ARG TRAEFIK_VER=latest
 
 FROM ghcr.io/by275/base:alpine AS prebuilt
 FROM ghcr.io/by275/base:alpine${ALPINE_VER} AS base
@@ -82,7 +82,7 @@ RUN \
 # 
 FROM base
 LABEL maintainer="by275"
-LABEL org.opencontainers.image.source https://github.com/by275/docker-traefik
+LABEL org.opencontainers.image.source=https://github.com/by275/docker-traefik
 
 # install packages
 RUN \
