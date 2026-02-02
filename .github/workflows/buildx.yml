@@ -21,16 +21,15 @@ jobs:
       -
         name: Check if buildx required
         run: |
-          if [ $GITHUB_EVENT_NAME = "schedule" ]; then
-            docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc traefik:${{ env.IMAGE_TAG }} \
-              /usr/local/bin/traefik /abc/traefik1
-            docker run -i --entrypoint=/bin/cp -v ${PWD}:/abc ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
-              /usr/local/bin/traefik /abc/traefik2
-            if cmp -s traefik1 traefik2 ; then X_SKIP=true ; else X_SKIP=false ; fi
-          else
-            X_SKIP=false
+          if [ $GITHUB_EVENT_NAME != "schedule" ]; then
+            echo "X_SKIP=false" >> $GITHUB_ENV
+            exit 0
           fi
-          echo "X_SKIP=$X_SKIP" >> $GITHUB_ENV
+          docker run --rm --entrypoint=cat traefik:${{ env.IMAGE_TAG }} \
+            /usr/local/bin/traefik > bin1
+          docker run --rm --entrypoint=cat ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            /usr/local/bin/traefik > bin2
+          if ! cmp -s bin1 bin2 ; then echo "X_SKIP=false" >> $GITHUB_ENV ; fi
       -
         name: Checkout
         if: env.X_SKIP == 'false'
