@@ -11,6 +11,8 @@ on:
 env:
   IMAGE_NAME: ghcr.io/by275/traefik
   IMAGE_TAG: latest
+  X_SKIP: "true"
+  APP_VER: unknown
 
 jobs:
   buildx:
